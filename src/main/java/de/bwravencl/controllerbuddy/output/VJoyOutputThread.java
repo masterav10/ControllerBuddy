@@ -141,6 +141,7 @@ public abstract class VJoyOutputThread extends OutputThread {
 		}
 
 		newDownSet.clear();
+		newDownSet.addAll(stillDownSet);
 		for (int n : sourceSet) {
 			boolean alreadyDown = false;
 
