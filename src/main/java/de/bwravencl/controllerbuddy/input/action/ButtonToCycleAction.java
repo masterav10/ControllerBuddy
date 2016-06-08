@@ -22,8 +22,9 @@ import java.util.List;
 
 import de.bwravencl.controllerbuddy.input.Input;
 
-public class ButtonToCycleAction implements IButtonToAction {
+public class ButtonToCycleAction extends DescribedAction implements IButtonToAction {
 
+	private boolean autoCycle = true;
 	private boolean wasUp = true;
 	private int index = 0;
 	private boolean longPress = DEFAULT_LONG_PRESS;
@@ -42,23 +43,43 @@ public class ButtonToCycleAction implements IButtonToAction {
 		return cycleAction;
 	}
 
+	public void cycle(boolean previous) {
+		if ((!previous && index == actions.size() - 1) || (previous && index == actions.size() + 1))
+			index = 0;
+		else {
+			if (previous)
+				index--;
+			else
+				index++;
+		}
+	}
+
 	@Override
 	public void doAction(Input input, float value) {
 		value = handleLongPress(value);
 
-		if (value != activationValue) {
-			actions.get(index).doAction(input, value);
-			if (wasUp == false) {
-				if (index == actions.size() - 1)
-					index = 0;
-				else
-					index++;
+		if (autoCycle) {
+			if (value != activationValue) {
+				actions.get(index).doAction(input, value);
+				if (!wasUp) {
+					if (index == actions.size() - 1)
+						index = 0;
+					else
+						index++;
 
-				wasUp = true;
+					wasUp = true;
+				}
+			} else if (wasUp) {
+				actions.get(index).doAction(input, activationValue);
+				wasUp = false;
 			}
-		} else if (wasUp) {
-			actions.get(index).doAction(input, activationValue);
-			wasUp = false;
+		} else {
+			if (value == activationValue)
+				input.setActiveCycleAction(this);
+			else {
+				actions.get(index).doAction(input, activationValue);
+				input.setActiveCycleAction(null);
+			}
 		}
 	}
 
@@ -69,6 +90,10 @@ public class ButtonToCycleAction implements IButtonToAction {
 	@Override
 	public float getActivationValue() {
 		return activationValue;
+	}
+
+	public boolean isAutoCycle() {
+		return autoCycle;
 	}
 
 	@Override
@@ -87,6 +112,10 @@ public class ButtonToCycleAction implements IButtonToAction {
 	@Override
 	public void setActivationValue(Float activationValue) {
 		this.activationValue = activationValue;
+	}
+
+	public void setAutoCycle(Boolean autoCycle) {
+		this.autoCycle = autoCycle;
 	}
 
 	@Override

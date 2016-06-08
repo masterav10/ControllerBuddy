@@ -17,7 +17,7 @@
 
 package de.bwravencl.controllerbuddy.input.action;
 
-public abstract class InvertableAction implements IAction {
+public abstract class InvertableAction extends DescribedAction {
 
 	protected boolean invert = false;
 

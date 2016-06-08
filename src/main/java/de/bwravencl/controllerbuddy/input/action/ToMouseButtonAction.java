@@ -17,7 +17,7 @@
 
 package de.bwravencl.controllerbuddy.input.action;
 
-public abstract class ToMouseButtonAction implements IAction {
+public abstract class ToMouseButtonAction extends DescribedAction {
 
 	public static final int DEFAULT_MOUSE_BUTTON = 1;
 

@@ -51,6 +51,7 @@ import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSpinner;
+import javax.swing.JTextField;
 import javax.swing.ListModel;
 import javax.swing.ListSelectionModel;
 import javax.swing.SpinnerNumberModel;
@@ -58,6 +59,8 @@ import javax.swing.UIManager;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.text.DefaultFormatter;
@@ -324,6 +327,58 @@ public class EditActionsDialog extends JDialog {
 
 	}
 
+	private class JTextFieldSetPropertyDocumentListener extends AbstractAction implements DocumentListener {
+
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 3053298327980558981L;
+		private final Method setterMethod;
+		private final JTextField textField;
+
+		public JTextFieldSetPropertyDocumentListener(JTextField textField, Method setterMethod) {
+			this.setterMethod = setterMethod;
+			this.textField = textField;
+		}
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			setModeDescription();
+		}
+
+		@Override
+		public void changedUpdate(DocumentEvent e) {
+			setModeDescription();
+		}
+
+		@Override
+		public void insertUpdate(DocumentEvent e) {
+			setModeDescription();
+		}
+
+		@Override
+		public void removeUpdate(DocumentEvent e) {
+			setModeDescription();
+		}
+
+		private void setModeDescription() {
+			final String description = textField.getText();
+
+			if (description != null && description.length() > 0) {
+				try {
+					setterMethod.invoke(selectedAssignedAction, description);
+				} catch (IllegalAccessException e) {
+					e.printStackTrace();
+				} catch (IllegalArgumentException e) {
+					e.printStackTrace();
+				} catch (InvocationTargetException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+
+	}
+
 	private class OKAction extends AbstractAction {
 
 		/**
@@ -397,7 +452,8 @@ public class EditActionsDialog extends JDialog {
 	private static final String[] ACTION_CLASSES_BUTTON = { ACTION_CLASS_PREFIX + "ButtonToButtonAction",
 			ACTION_CLASS_PREFIX + "ButtonToCycleAction", ACTION_CLASS_PREFIX + "ButtonToKeyAction",
 			ACTION_CLASS_PREFIX + "ButtonToModeAction", ACTION_CLASS_PREFIX + "ButtonToMouseButtonAction",
-			ACTION_CLASS_PREFIX + "ButtonToRelativeAxisReset", ACTION_CLASS_PREFIX + "ButtonToScrollAction" };
+			ACTION_CLASS_PREFIX + "ButtonToNextCycleAction", ACTION_CLASS_PREFIX + "ButtonToRelativeAxisReset",
+			ACTION_CLASS_PREFIX + "ButtonToScrollAction" };
 	private static final String[] ACTION_CLASSES_CYCLE_ACTION = { ACTION_CLASS_PREFIX + "ButtonToButtonAction",
 			ACTION_CLASS_PREFIX + "ButtonToKeyAction", ACTION_CLASS_PREFIX + "ButtonToMouseButtonAction",
 			ACTION_CLASS_PREFIX + "ButtonToRelativeAxisReset", ACTION_CLASS_PREFIX + "ButtonToScrollAction" };
@@ -715,6 +771,14 @@ public class EditActionsDialog extends JDialog {
 												spinner.setValue(parentActivationValue);
 												spinner.setEnabled(false);
 											}
+										} else if (String.class == clazz) {
+											final JTextField textField = new JTextField(16);
+											JTextFieldSetPropertyDocumentListener jTextFieldSetPropertyDocumentListener = new JTextFieldSetPropertyDocumentListener(
+													textField, m);
+											textField.addActionListener(jTextFieldSetPropertyDocumentListener);
+											textField.getDocument()
+													.addDocumentListener(jTextFieldSetPropertyDocumentListener);
+											propertyPanel.add(textField);
 										} else if (Mode.class == clazz) {
 											final JComboBox<Mode> comboBox = new JComboBox<Mode>();
 											for (Mode p : Input.getProfile().getModes())

@@ -33,4 +33,8 @@ public interface IAction extends Cloneable {
 
 	public void doAction(Input input, float value);
 
+	public String getDescription();
+
+	public void setDescription(String description);
+
 }

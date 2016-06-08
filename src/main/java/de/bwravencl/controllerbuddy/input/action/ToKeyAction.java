@@ -19,7 +19,7 @@ package de.bwravencl.controllerbuddy.input.action;
 
 import de.bwravencl.controllerbuddy.input.KeyStroke;
 
-public abstract class ToKeyAction implements IAction {
+public abstract class ToKeyAction extends DescribedAction {
 
 	protected boolean downUp = false;
 	protected boolean wasUp = true;

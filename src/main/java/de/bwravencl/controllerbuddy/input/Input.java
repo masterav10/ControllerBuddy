@@ -140,8 +140,8 @@ public class Input {
 	private final Set<Integer> downMouseButtons = new HashSet<Integer>();
 	private final Set<Integer> downUpMouseButtons = new HashSet<Integer>();
 	private final Set<KeyStroke> downKeyStrokes = new HashSet<KeyStroke>();
-
 	private final Set<KeyStroke> downUpKeyStrokes = new HashSet<KeyStroke>();
+	private ButtonToCycleAction activeCycleAction = null;
 
 	public Input(Controller controller) {
 		this.controller = controller;
@@ -150,6 +150,10 @@ public class Input {
 			axis.put(va, 0);
 
 		profile = new Profile();
+	}
+
+	public ButtonToCycleAction getActiveCycleAction() {
+		return activeCycleAction;
 	}
 
 	public boolean[] getButtons() {
@@ -233,6 +237,10 @@ public class Input {
 				}
 			}
 		}
+	}
+
+	public void setActiveCycleAction(ButtonToCycleAction activeCycleAction) {
+		this.activeCycleAction = activeCycleAction;
 	}
 
 	public void setAxis(VirtualAxis virtualAxis, float value) {

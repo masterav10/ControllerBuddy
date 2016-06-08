@@ -17,7 +17,7 @@
 
 package de.bwravencl.controllerbuddy.input.action;
 
-public abstract class ToButtonAction implements IAction {
+public abstract class ToButtonAction extends DescribedAction {
 
 	protected int buttonId = 0;
 
