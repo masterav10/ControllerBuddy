@@ -23,8 +23,12 @@ public class AxisToAxisAction extends ToAxisAction implements ISuspendableAction
 
 	@Override
 	public void doAction(Input input, float value) {
-		if (!isSuspended())
+		if (!isSuspended()) {
+			if (Math.abs(value) <= deadZone)
+				value = 0.0f;
+
 			input.setAxis(virtualAxis, invert ? -value : value);
+		}
 	}
 
 }
