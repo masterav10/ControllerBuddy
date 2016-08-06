@@ -873,6 +873,8 @@ public final class Main {
 	}
 
 	public static void updateOverlayAxisIndicators() {
+		overlayFrame.toFront();
+
 		final Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 		if (prevScreenSize == null || screenSize.width != prevScreenSize.width
 				|| screenSize.height != prevScreenSize.height) {
