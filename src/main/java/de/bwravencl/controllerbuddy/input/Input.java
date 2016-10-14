@@ -36,6 +36,7 @@ import com.sun.jna.Pointer;
 import com.sun.jna.platform.win32.WinDef.HMODULE;
 
 import de.bwravencl.controllerbuddy.gui.Main;
+import de.bwravencl.controllerbuddy.input.action.AxisToAxisAction;
 import de.bwravencl.controllerbuddy.input.action.ButtonToCycleAction;
 import de.bwravencl.controllerbuddy.input.action.ButtonToModeAction;
 import de.bwravencl.controllerbuddy.input.action.IAction;
@@ -112,6 +113,8 @@ public class Input {
 	public enum VirtualAxis {
 		X, Y, Z, RX, RY, RZ, S0, S1
 	}
+
+	private static final float ABORT_SUSPENSION_ACTION_DEADZONE = 0.25f;
 
 	private static final String XBOX_360_CONTROLLER_NAME = "XBOX 360 For Windows (Controller)";
 
@@ -318,10 +321,17 @@ public class Input {
 			return false;
 
 		for (final Component c : getComponents(controller)) {
+			final float pollData = c.getPollData();
+
+			for (final String componentName : AxisToAxisAction.componentToSuspendedActionsMap.keySet()) {
+				if (Math.abs(pollData) <= ABORT_SUSPENSION_ACTION_DEADZONE && componentName.equals(c.getName()))
+					AxisToAxisAction.componentToSuspendedActionsMap.remove(componentName);
+			}
+
 			final List<ButtonToModeAction> buttonToModeActions = profile.getComponentToModeActionMap().get(c.getName());
 			if (buttonToModeActions != null) {
 				for (final ButtonToModeAction a : buttonToModeActions)
-					a.doAction(this, c.getPollData());
+					a.doAction(this, pollData);
 			}
 
 			final List<Mode> modes = profile.getModes();
@@ -333,7 +343,7 @@ public class Input {
 
 			if (actions != null) {
 				for (final IAction a : actions)
-					a.doAction(this, c.getPollData());
+					a.doAction(this, pollData);
 			}
 		}
 
