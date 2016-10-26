@@ -60,8 +60,8 @@ Physical Controller
  Target Application                 Target Application
 </pre>
 
-#####Example Screenshot:
-![Example Screenshot](https://github.com/bwRavencl/ControllerBuddy/raw/master/example_screenshot.png)
+#####Example Screenshots:
+![Main Window](https://github.com/bwRavencl/ControllerBuddy/raw/master/example_screenshot_1.png) ![Component Editor](https://github.com/bwRavencl/ControllerBuddy/raw/master/example_screenshot_2.png)
 
 #####Command Line Parameters:
 <pre>
